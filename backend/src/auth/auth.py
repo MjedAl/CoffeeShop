@@ -57,7 +57,7 @@ def get_token_auth_header():
         }, 401)
 
     auth_token = auth_parts[1]
-    raise auth_token
+    return auth_token
 
 '''
 @TODO implement check_permissions(permission, payload) method
@@ -80,7 +80,7 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'access_denied',
             'description': 'You don\'t have premission to do the process'
-        }, 403)
+        }, 401)
     return True
 
 '''
