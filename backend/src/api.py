@@ -16,8 +16,7 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
-
+#db_drop_and_create_all()
 ## ROUTES
 '''
 @TODO implement endpoint
@@ -27,7 +26,18 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks', methods=['GET'])
+def get_drinks():
+    try:
+        drinks = Drink.query.order_by(Drink.id).all()
+        return jsonify({
+            'success': True,
+            'drinks': {drink.short() for drink in drinks}
+        })
+    except Exception:
+        return jsonify({
+            'success': False
+        })
 
 '''
 @TODO implement endpoint
@@ -37,7 +47,19 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks-detail', methods=['GET'])
+@requires_auth('get:drinks-detail')
+def drinks_details():
+    try:
+        drinks = Drink.query.order_by(Drink.id).all()
+        return jsonify({
+            'success': True,
+            'drinks': {drink.long() for drink in drinks}
+        })
+    except Exception:
+        return jsonify({
+            'success': False
+        })
 
 '''
 @TODO implement endpoint
@@ -48,7 +70,19 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
+def post_drink():
+    try:
+        drinks = Drink.query.order_by(Drink.id).all()
+        return jsonify({
+            'success': True,
+            'drinks': {drink.long() for drink in drinks}
+        })
+    except Exception:
+        return jsonify({
+            'success': False
+        })
 
 '''
 @TODO implement endpoint
@@ -76,27 +110,39 @@ CORS(app)
 
 
 ## Error Handling
-'''
-Example error handling for unprocessable entity
-'''
-@app.errorhandler(422)
-def unprocessable(error):
+
+@app.errorhandler(400)
+def bad_request(error):
     return jsonify({
-                    "success": False, 
-                    "error": 422,
-                    "message": "unprocessable"
-                    }), 422
+        "success": False,
+        "error": 400,
+        "message": "Bad request"
+    }), 400
 
-'''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
-    each error handler should return (with approprate messages):
-             jsonify({
-                    "success": False, 
-                    "error": 404,
-                    "message": "resource not found"
-                    }), 404
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "Not found"
+    }), 404
 
-'''
+@app.errorhandler(422)
+def unprocessable_entity(error):
+    return jsonify({
+        "success": False,
+        "error": 422,
+        "message": "Un-processable Entity"
+    }), 422
+
+@app.errorhandler(500)
+def server_error(error):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": "Internal Server Error"
+    }), 500
+
 
 '''
 @TODO implement error handler for 404
