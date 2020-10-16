@@ -36,13 +36,11 @@ CORS(app)
 def get_drinks():
     try:
         drinks = Drink.query.all()
-        # app.logger.warning(len(drinks))
         return jsonify({
             'success': True,
             'drinks': [drink.short() for drink in drinks]
         })
     except Exception:
-        app.logger.warning(Exception)
         abort(500)
 
 '''
@@ -61,13 +59,11 @@ def get_drinks():
 def drinks_details(payload):
     try:
         drinks = Drink.query.order_by(Drink.id).all()
-        # app.logger.warning(len(drinks))
         return jsonify({
             'success': True,
             'drinks': [drink.long() for drink in drinks]
         })
     except Exception:
-        app.logger.warning(Exception)
         return jsonify({
             'success': False
         })
@@ -118,9 +114,7 @@ def update_drink(payload, id):
     if drink is None:
         abort(404)
     else:
-        app.logger.warning(drink.long())
         JSON_body = request.get_json()
-        app.logger.warning(JSON_body)
         title = JSON_body.get('title')
         recipe = JSON_body.get('recipe')
         if title is not None:
@@ -128,7 +122,6 @@ def update_drink(payload, id):
         if recipe is not None:
             drink.recipe = json.dumps(recipe)
         drink.update()
-        app.logger.warning(drink.long())
         return jsonify({
             'success': True,
             'drinks': drink.long()
@@ -155,7 +148,6 @@ def delete_drink(payload, id):
         abort(404)
     else:
         drink.delete()
-        app.logger.warning('deleted')
         return jsonify({
             'success': True,
             'delete': drink.id
@@ -201,7 +193,7 @@ def server_error(error):
     }), 500
 
 '''
-@implement error handler for AuthError TODO CHANGE
+@implement error handler for AuthError CHANGE
     error handler should conform to general task above
 '''
 
@@ -211,5 +203,4 @@ def auth_error(exception):
     """
     Receive the raised authorization error and propagates it as response
     """
-    app.logger.warning(exception.error)
     return jsonify(exception.error), exception.status_code
