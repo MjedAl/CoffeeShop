@@ -20,9 +20,9 @@ export class AuthService {
 
   constructor() { }
 
-  build_login_link(callbackPath = '') {
+  build_login_link(callbackPath = '/login-result') {
     let link = 'https://';
-    link += this.url + '.auth0.com';
+    link += this.url + '.eu.auth0.com';
     link += '/authorize?';
     link += 'audience=' + this.audience + '&';
     link += 'response_type=token&';
